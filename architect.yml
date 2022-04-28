@@ -1,0 +1,61 @@
+name: mandy-node-test
+description: |
+  Example component that includes a Nodejs REST API.
+keywords:
+  - node
+  - javascript
+
+parameters:
+  api_db_host:
+    description: API database host override
+    required: false
+  db_use_ssl:
+    description: Whether or not the database connection should use SSL
+    default: false
+  api_db_name:
+    description: Name of the database used by the API
+    default: test_database
+  api_host:
+    description: API host override
+    required: false
+  root_db_pass:
+    description: Root password to assign to the generated database
+    default: architect
+  root_db_user:
+    description: Root user to assign to the generated database
+    default: postgres
+  ingress_subdomain:
+    default: appz
+    description: Subdomain to listen for requests on
+
+services:
+  api:
+    depends_on:
+      - api-db
+    build:
+      context: ./
+      args:
+        NODE_ENV: production
+    interfaces:
+      appz: 4000
+    
+  api-db:
+    image: postgres:11
+    interfaces:
+      postgres:
+        host: ${{ secrets.api_db_host }}
+        port: 5432
+        username: ${{ secrets.root_db_user }}
+        password: ${{ secrets.root_db_pass }}
+        protocol: postgres
+    environment:
+      POSTGRES_USER: ${{ secrets.root_db_user }}
+      POSTGRES_PASSWORD: ${{ secrets.root_db_pass }}
+      POSTGRES_DB: ${{ secrets.api_db_name }}
+
+
+interfaces:
+  appz:
+    url: ${{ services.api.interfaces.appz.url }}
+    ingress:
+      subdomain: ${{ parameters.ingress_subdomain }}
