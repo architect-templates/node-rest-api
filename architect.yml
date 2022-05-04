@@ -5,7 +5,7 @@ keywords:
   - node
   - javascript
 
-parameters:
+secrets:
   api_db_host:
     description: API database host override
     required: false
@@ -38,7 +38,7 @@ services:
         NODE_ENV: production
     interfaces:
       appz: 4000
-    
+
   api-db:
     image: postgres:11
     interfaces:
@@ -53,9 +53,8 @@ services:
       POSTGRES_PASSWORD: ${{ secrets.root_db_pass }}
       POSTGRES_DB: ${{ secrets.api_db_name }}
 
-
 interfaces:
   appz:
     url: ${{ services.api.interfaces.appz.url }}
     ingress:
-      subdomain: ${{ parameters.ingress_subdomain }}
+      subdomain: ${{ secrets.ingress_subdomain }}
