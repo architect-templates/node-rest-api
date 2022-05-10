@@ -1,61 +1,49 @@
-name: mandy-node-test
-description: |
-  Example component that includes a Nodejs REST API.
+name: node-rest-api
+description: A simple sign in REST API built with Node.js, Express, and a postgres database.
+homepage: https://github.com/architect-team/architect-cli/tree/master/examples/stateful-component
 keywords:
-  - node
-  - javascript
+  - architect
+  - examples
+  - stateful
+  - postgres
+  - nodejs
+  - reactjs
 
-parameters:
-  api_db_host:
-    description: API database host override
-    required: false
-  db_use_ssl:
-    description: Whether or not the database connection should use SSL
-    default: false
-  api_db_name:
-    description: Name of the database used by the API
-    default: test_database
-  api_host:
-    description: API host override
-    required: false
-  root_db_pass:
-    description: Root password to assign to the generated database
+secrets:
+  db_user:
+    description: Root user to assign to the component's DB
     default: architect
-  root_db_user:
-    description: Root user to assign to the generated database
-    default: postgres
-  ingress_subdomain:
-    default: appz
-    description: Subdomain to listen for requests on
+  db_pass:
+    description: Root password to assign to the component's DB
+    default: secret
+  db_name:
+    description: Name of the DB the component will store content in
+    default: api-db
 
 services:
-  api:
-    depends_on:
-      - api-db
-    build:
-      context: ./
-      args:
-        NODE_ENV: production
-    interfaces:
-      appz: 4000
-    
   api-db:
-    image: postgres:11
+    image: postgres:12
     interfaces:
       postgres:
-        host: ${{ secrets.api_db_host }}
         port: 5432
-        username: ${{ secrets.root_db_user }}
-        password: ${{ secrets.root_db_pass }}
-        protocol: postgres
+        protocol: postgresql
     environment:
-      POSTGRES_USER: ${{ secrets.root_db_user }}
-      POSTGRES_PASSWORD: ${{ secrets.root_db_pass }}
-      POSTGRES_DB: ${{ secrets.api_db_name }}
-
-
+      POSTGRES_USER: ${{ secrets.db_user }}
+      POSTGRES_PASSWORD: ${{ secrets.db_pass }}
+      POSTGRES_DB: ${{ secrets.db_name }}
+  api:
+    build:
+      context: .
+    interfaces:
+      http: 8080
+    environment:
+      DB_ADDR: ${{ services.api-db.interfaces.postgres.url }}/${{ secrets.db_name }}
+      DB_USER: ${{ secrets.db_user }}
+      DB_PASS: ${{ secrets.db_pass }}
+  
 interfaces:
-  appz:
-    url: ${{ services.api.interfaces.appz.url }}
+  api:
+    description: A description
+    url: ${{ services.api.interfaces.http.url }}
     ingress:
-      subdomain: ${{ parameters.ingress_subdomain }}
+      subdomain: api
