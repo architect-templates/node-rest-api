@@ -78,8 +78,7 @@ const start = async () => {
         rating: req.body.rating,
       }).then((item) => res.status(201).json(item));
     } catch (err) {
-      // console.log(err);
-      return res.status(400).json({ errors: err.errors[0] });
+      return res.status(400).json({ errors: err.errors });
     }
   });
 
@@ -95,6 +94,25 @@ const start = async () => {
         { returning: true, where: { id: updateId } },
         // eslint-disable-next-line no-unused-vars
       ).then(([numItems, [items]]) => res.send(res.status(201).json(items)));
+    } catch (err) {
+      return res.status(500);
+    }
+  });
+
+  app.delete('/items/:id', async (req, res) => {
+    try {
+      logger.info('DELETE /items');
+      const deleteId = req.params.id;
+      console.log(deleteId);
+
+      if (Number.isNaN(deleteId)) return res.status(400).end();
+      console.log('test');
+
+      Items.destroy({
+        where: { id: deleteId },
+      }).then(() => {
+        res.status(204).end();
+      });
     } catch (err) {
       return res.status(500);
     }
