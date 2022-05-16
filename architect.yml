@@ -36,6 +36,13 @@ services:
       context: .
     interfaces:
       http: 8080
+    ${{ if architect.environment == 'local' }}:
+      command: npm run dev
+      volumes:
+        src:
+          description: Mount the src dir when running locally so code changes can be detected
+          mount_path: /usr/src/app/src
+          host_path: ./src/
     environment:
       DB_ADDR: ${{ services.api-db.interfaces.postgres.url }}/${{ secrets.db_name }}
       DB_USER: ${{ secrets.db_user }}

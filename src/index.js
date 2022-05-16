@@ -2,6 +2,7 @@ const winston = require('winston');
 const express = require('express');
 const cors = require('cors');
 const bodyParser = require('body-parser');
+const Sequelize = require('sequelize');
 const { runMigration } = require('./migration');
 
 const start = async () => {
@@ -11,8 +12,8 @@ const start = async () => {
     defaultMeta: { service: 'backend' },
     transports: [
       new winston.transports.Console(),
-      new winston.transports.File({ filename: `${__dirname}/../logs/backend.log` })
-    ]
+      new winston.transports.File({ filename: `${__dirname}/../logs/backend.log` }),
+    ],
   });
 
   const app = express();
@@ -20,7 +21,6 @@ const start = async () => {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
-  const Sequelize = require('sequelize');
   const sequelize = new Sequelize(process.env.DB_ADDR, {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
@@ -28,39 +28,73 @@ const start = async () => {
       max: 10,
       match: [
         Sequelize.ConnectionError,
-        Sequelize.ConnectionRefusedError
+        Sequelize.ConnectionRefusedError,
       ],
-    }
+    },
   });
 
-  const SignIns = sequelize.define('name', {
-    name: Sequelize.STRING
+  const Items = sequelize.define('Item', {
+    name: {
+      type: Sequelize.STRING,
+      allowNull: false,
+      unique: true,
+    },
+    rating: {
+      type: Sequelize.INTEGER,
+      validate: {
+        min: 1,
+        max: 5,
+      },
+    },
   });
 
-  app.get('/', async (req, res) => {
-    logger.info(`GET /`);
-    return res.send('Try the /sign-ups endoint!');
-    return res.status(200).json(rows);
-  });
   await runMigration(sequelize, logger);
 
-  app.get('/sign-ins', async (req, res) => {
-    logger.info(`GET /sign-ins`);
-    const rows = await SignIns.findAll({
+  app.get('/', async (req, res) => {
+    logger.info('GET /items');
+    const rows = await Items.findAll({
       order: [
         ['id', 'DESC'],
-      ]
+      ],
     });
     return res.status(200).json(rows);
   });
 
-  app.post('/sign-ins', async (req, res) => {
+  app.get('/items', async (req, res) => {
+    logger.info('GET /items');
+    const rows = await Items.findAll({
+      order: [
+        ['id', 'DESC'],
+      ],
+    });
+    return res.status(200).json(rows);
+  });
+
+  app.post('/items', async (req, res) => {
     try {
-      logger.info(`POST /sign-ins`);
-      const name = await SignIns.create({
+      logger.info('POST /items');
+      await Items.create({
         name: req.body.name,
-      });
-      return res.status(201).json(name);
+        rating: req.body.rating,
+      }).then((item) => res.status(201).json(item));
+    } catch (err) {
+      // console.log(err);
+      return res.status(400).json({ errors: err.errors[0] });
+    }
+  });
+
+  app.put('/items', async (req, res) => {
+    try {
+      logger.info('PUT /items');
+      const updateId = req.body.id;
+      const updatedName = req.body.name;
+      logger.info(`id: ${updateId}, name: ${updatedName}`);
+
+      await Items.update(
+        { name: updatedName },
+        { returning: true, where: { id: updateId } },
+        // eslint-disable-next-line no-unused-vars
+      ).then(([numItems, [items]]) => res.send(res.status(201).json(items)));
     } catch (err) {
       return res.status(500);
     }
@@ -71,7 +105,7 @@ const start = async () => {
   });
 
   return app.listen(8080, () => {
-    logger.info(`> Listening on port: 8080`);
+    logger.info('> Listening on port: 8080');
   });
 };
 
