@@ -5,11 +5,13 @@ const bodyParser = require('body-parser');
 const Sequelize = require('sequelize');
 const { runMigration } = require('./migration');
 
+const port = process.env.PORT;
+
 const start = async () => {
   const logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
-    defaultMeta: { service: 'backend' },
+    defaultMeta: { service: 'api' },
     transports: [
       new winston.transports.Console(),
       new winston.transports.File({ filename: `${__dirname}/../logs/backend.log` }),
@@ -70,51 +72,66 @@ const start = async () => {
     return res.status(200).json(rows);
   });
 
+  // eslint-disable-next-line consistent-return
   app.post('/items', async (req, res) => {
+    logger.info('POST /items');
+
     try {
-      logger.info('POST /items');
-      await Items.create({
-        name: req.body.name,
-        rating: req.body.rating,
-      }).then((item) => res.status(201).json(item));
+      await sequelize.transaction(async (t) => {
+        const item = await Items.create({
+          name: req.body.name,
+          rating: req.body.rating,
+        }, {
+          transaction: t,
+        });
+        return res.status(200).json(item);
+      });
     } catch (err) {
-      return res.status(400).json({ errors: err.errors });
+      logger.info(err);
+      return res.status(409).json({ errors: err.errors });
     }
   });
 
+  // eslint-disable-next-line consistent-return
   app.put('/items', async (req, res) => {
     try {
       logger.info('PUT /items');
-      const updateId = req.body.id;
-      const updatedName = req.body.name;
-      logger.info(`id: ${updateId}, name: ${updatedName}`);
 
-      await Items.update(
-        { name: updatedName },
-        { returning: true, where: { id: updateId } },
-        // eslint-disable-next-line no-unused-vars
-      ).then(([numItems, [items]]) => res.send(res.status(201).json(items)));
+      const { id, name } = req.body;
+      logger.info(`id: ${id}, name: ${name}`);
+
+      await sequelize.transaction(async (t) => {
+        const item = await Items.update(
+          { name },
+          { returning: true, where: { id } },
+          { transaction: t },
+        );
+        return res.status(200).json(item);
+      });
     } catch (err) {
-      return res.status(500);
+      logger.info(err);
+      return res.status(500).json({ errors: err.errors });
     }
   });
 
+  // eslint-disable-next-line consistent-return
   app.delete('/items/:id', async (req, res) => {
     try {
       logger.info('DELETE /items');
-      const deleteId = req.params.id;
-      console.log(deleteId);
 
-      if (Number.isNaN(deleteId)) return res.status(400).end();
-      console.log('test');
+      const { id } = req.params;
 
-      Items.destroy({
-        where: { id: deleteId },
-      }).then(() => {
-        res.status(204).end();
+      await sequelize.transaction(async (t) => {
+        const rows = await Items.destroy(
+          {
+            where: { id },
+          },
+          { transaction: t },
+        );
+        return rows ? res.status(204).end() : res.status(404).end();
       });
     } catch (err) {
-      return res.status(500);
+      return res.status(500).json({ errors: err.errors });
     }
   });
 
@@ -122,8 +139,8 @@ const start = async () => {
     res.status(200).json([]);
   });
 
-  return app.listen(8080, () => {
-    logger.info('> Listening on port: 8080');
+  return app.listen(port, () => {
+    logger.info(`> Listening on port: ${port}`);
   });
 };
 

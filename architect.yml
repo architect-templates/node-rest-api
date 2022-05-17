@@ -19,13 +19,19 @@ secrets:
   db_name:
     description: Name of the DB the component will store content in
     default: api-db
+  db_port:
+    description: Port for the db
+    default: 5432
+  api_port:
+    description: Port for api
+    default: 8080
 
 services:
   api-db:
     image: postgres:12
     interfaces:
       postgres:
-        port: 5432
+        port: ${{ secrets.db_port }}
         protocol: postgresql
     environment:
       POSTGRES_USER: ${{ secrets.db_user }}
@@ -35,7 +41,7 @@ services:
     build:
       context: .
     interfaces:
-      http: 8080
+      http: ${{ secrets.api_port }}
     ${{ if architect.environment == 'local' }}:
       command: npm run dev
       volumes:
@@ -47,6 +53,7 @@ services:
       DB_ADDR: ${{ services.api-db.interfaces.postgres.url }}/${{ secrets.db_name }}
       DB_USER: ${{ secrets.db_user }}
       DB_PASS: ${{ secrets.db_pass }}
+      PORT: ${{ secrets.api_port }}
   
 interfaces:
   api:
