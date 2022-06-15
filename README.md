@@ -22,10 +22,10 @@
 It is extremely common to run a REST API with a backend database as a standalone service so that it can be consumed by 
 multiple, disparate applications. 
 
-In this example, you'll learn how to capture an API written in Node.js with a Postgres database backend in an Architect 
-component to enable automated deployments, networking and network security for your application - wherever it gets deployed. 
+In this example, you'll learn how to capture an API written in [Node.js](https://nodejs.org/en/) with a [Postgres](https://www.postgresql.org/) 
+database backend in an Architect Component to enable automated deployments, networking and network security for your application - wherever it gets deployed. 
 
-In the `architect.yml` file for this project, we describe these two services as deployable runtimes. However, we also 
+In the `architect.yml` file for this project, we describe this API as two deployable services. However, we also 
 leverage Architect's [service discovery](//docs.architect.io/components/service-discovery) features to populate environment 
 secrets by reference. This not only allows us to automatically connect the services to each other, but it also allows 
 Architect to build strict network policies to whitelist the traffic between these services. Now we won't have any work ahead
@@ -59,19 +59,21 @@ The GET request returns the Items records in the following JSON payload:
 ```
 
 ## Running Locally
+The `architect.yml` file is declarative, which allows the Architect Component it describes to be run in any environment,
+from local development all the way to production. Follow these steps to clone this repository and run the application
+locally.
 
-Architect component specs are declarative, so they can be run locally or remotely.
+Once the deployment has completed, you can reach your new service by going to http://api.arc.localhost.
 
 ```sh
 # Clone the repository and navigate to this directory
-$ git clone https://github.com/architect-templates/node-rest-api.git
-$ cd ./architect-templates/node-rest-api
+$ git clone git@github.com:architect-templates/node-rest-api.git
+$ cd ./node-rest-api
 
 # Deploy locally using the dev command
-$ architect dev node-rest-api .
+$ architect dev .
 ```
 
-Once the deploy action has completed, you can reach your new service by going to http://api.arc.localhost/sign-ups.
 
 ## Deploying to the Cloud
 

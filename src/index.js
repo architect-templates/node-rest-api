@@ -72,10 +72,8 @@ const start = async () => {
     return res.status(200).json(rows);
   });
 
-  // eslint-disable-next-line consistent-return
   app.post('/items', async (req, res) => {
     logger.info('POST /items');
-
     try {
       await sequelize.transaction(async (t) => {
         const item = await Items.create({
@@ -87,12 +85,10 @@ const start = async () => {
         return res.status(200).json(item);
       });
     } catch (err) {
-      logger.info(err);
       return res.status(409).json({ errors: err.errors });
     }
   });
 
-  // eslint-disable-next-line consistent-return
   app.put('/items', async (req, res) => {
     try {
       logger.info('PUT /items');
@@ -109,12 +105,10 @@ const start = async () => {
         return res.status(200).json(item);
       });
     } catch (err) {
-      logger.info(err);
       return res.status(500).json({ errors: err.errors });
     }
   });
 
-  // eslint-disable-next-line consistent-return
   app.delete('/items/:id', async (req, res) => {
     try {
       logger.info('DELETE /items');
