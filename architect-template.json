@@ -1,0 +1,3 @@
+{
+  "database": ["external/postgres", "external/mysql", "external/mariadb"]
+}
