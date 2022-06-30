@@ -1,6 +1,6 @@
 {
   "database": {
-    "required": false,
+    "required": true,
     "choices":[
       {
         "name": "PostgreSQL",
