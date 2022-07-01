@@ -1,3 +1,19 @@
 {
-  "database": ["external/postgres", "external/mysql", "external/mariadb"]
+  "database": {
+    "required": true,
+    "choices":[
+      {
+        "name": "PostgreSQL",
+        "image": "postgres"
+      },
+      {
+        "name": "MySQL",
+        "image": "mysql"
+      },
+      {
+        "name": "MariaDB",
+        "image": "mariadb"
+      }
+    ]
+  }
 }
