@@ -4,15 +4,49 @@
     "choices":[
       {
         "name": "PostgreSQL",
-        "image": "postgres"
+        "service": [
+          "image: postgres:latest",
+          "interfaces:",
+          "  database:",
+          "    port: ${{ secrets.db_port }}",
+          "    protocol: postgresql",
+          "environment:",
+          "  POSTGRES_USER: ${{ secrets.db_user }}",
+          "  POSTGRES_PASSWORD: ${{ secrets.db_pass }}",
+          "  POSTGRES_DB: ${{ secrets.db_name }}"
+        ]
       },
       {
         "name": "MySQL",
-        "image": "mysql"
+        "service": [
+          "image: mysql:latest",
+          "interfaces:",
+          "  database:",
+          "    port: 3306",
+          "    username: ${{ secrets.db_user }}",
+          "    password: ${{ secrets.db_pass }}",
+          "    protocol: mysql",
+          "    path: /${{ secrets.db_name }}",
+          "environment:",
+          "  MYSQL_ROOT_PASSWORD: ${{ secrets.db_pass }}",
+          "  MYSQL_DATABASE: ${{ secrets.db_name }}"
+        ]
       },
       {
         "name": "MariaDB",
-        "image": "mariadb"
+        "service": [
+          "image: mariadb:latest",
+          "interfaces:",
+          "  database:",
+          "    port: 3306",
+          "    username: ${{ secrets.db_user }}",
+          "    password: ${{ secrets.db_pass }}",
+          "    protocol: mysql",
+          "    path: /${{ secrets.db_name }}",
+          "environment:",
+          "  MYSQL_ROOT_PASSWORD: ${{ secrets.db_pass }}",
+          "  MYSQL_DATABASE: ${{ secrets.db_name }}"
+        ]
       }
     ]
   }
