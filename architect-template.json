@@ -100,7 +100,6 @@
   },
   "frontend": {
     "required": false,
-    "depends_on": "api",
     "choices": [
       {
         "name": "React",
