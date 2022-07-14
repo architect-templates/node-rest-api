@@ -1,6 +1,6 @@
 name: node-rest-api
 description: A simple sign in REST API built with Node.js, Express, and a postgres database.
-homepage: https://github.com/architect-team/architect-cli/tree/master/examples/stateful-component
+homepage: https://github.com/architect-templates/node-rest-api
 keywords:
   - architect
   - examples
