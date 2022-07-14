@@ -97,5 +97,14 @@
         ]
       }
     ]
+  },
+  "frontend": {
+    "required": false,
+    "choices": [
+      {
+        "name": "React",
+        "project": "https://github.com/architect-templates/react"
+      }
+    ]
   }
 }
