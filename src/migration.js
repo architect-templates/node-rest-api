@@ -1,23 +1,18 @@
 exports.runMigration = async (sequelize, logger) => {
-    const DB_NAME = sequelize.getDatabaseName();
-  
-    try {
-      const result = await sequelize.query(`select exists(SELECT datname FROM pg_catalog.pg_database WHERE lower(datname) = lower('${DB_NAME}'));`);
-      if (!result[0][0].exists) {
-        logger.info('Creating database');
-        await sequelize.query(`CREATE DATABASE "${DB_NAME}"`);
-      } else {
-        logger.info('Database already exists');
-      }
-    } catch (err) {
-      logger.error(`Sequelize init failed\n${err}`);
-      throw err;
-    }
-  
-    try {
-      await sequelize.sync();
-    } catch (error) {
-      logger.error(`Sequelize sync failed\n${error}`);
-      throw error;
-    }
-  };
+  const DB_NAME = sequelize.getDatabaseName();
+
+  try {
+    await sequelize.query(`CREATE DATABASE "${DB_NAME}"`);
+  } catch (err) {
+    // To make this compatible with most database backends we do not want
+    // to crash here when running a raw query. The `sequelize sync` will catch
+    // the same issues.
+  }
+
+  try {
+    await sequelize.sync();
+  } catch (error) {
+    logger.error(`Sequelize sync failed\n${error}`);
+    throw error;
+  }
+};
