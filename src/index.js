@@ -50,7 +50,9 @@ const start = async () => {
     },
   });
 
+  console.log('Running migration...');
   await runMigration(sequelize, logger);
+  console.log('Ran migration.');
 
   app.get('/', async (req, res) => {
     logger.info('GET /items');

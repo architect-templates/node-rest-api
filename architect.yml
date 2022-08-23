@@ -47,7 +47,7 @@ services:
       DB_USER: ${{ secrets.db_user }}
       DB_PASS: ${{ secrets.db_pass }}
       PORT: ${{ secrets.api_port }}
-  
+
 interfaces:
   api:
     description: A description
