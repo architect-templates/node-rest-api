@@ -75,9 +75,8 @@ $ git clone git@github.com:architect-templates/node-rest-api.git
 $ cd ./node-rest-api
 
 # Deploy locally using the dev command
-$ architect dev .
+$ architect dev architect.yml
 ```
-
 
 ## Deploying to the Cloud
 
@@ -92,9 +91,6 @@ The `<account-name>` is the name you used when you created your account in Archi
 the `<environment-name>` to deploy to the free environment that is created when you register with Architect.
 
 ```sh
-# Register and tag the component with Architect Cloud's component registry
-$ architect register . --tag latest --account <account-name>
-
 # Deploy to Architect Cloud
-$ architect deploy node-rest-api -a <account-name> -e <environment-name>
+$ architect deploy architect.yml -e example-environment
 ```
