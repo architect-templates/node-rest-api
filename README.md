@@ -83,11 +83,7 @@ $ architect dev architect.yml
 Want to try deploying this to a cloud environment? Architect's got you covered there, too! It only takes a minute to
 [sign up for a free account](https://cloud.architect.io/signup).
 
-You can then [register the component](https://docs.architect.io/getting-started/introduction/#register-a-component)
-to your free environment and [deploy the component](https://docs.architect.io/getting-started/introduction/#deploy-to-the-cloud)
-using the commands below from the `node-rest-api` directory.
-
-"example-environment" is the name of the free environment that is created when you register with Architect.
+You can then [deploy the component](https://docs.architect.io/getting-started/introduction/#deploy-to-the-cloud) using the command below from the `node-rest-api` directory. "example-environment" is the name of the free environment that is created when you register with Architect.
 
 ```sh
 # Deploy to Architect Cloud
