@@ -87,7 +87,7 @@ You can then [register the component](https://docs.architect.io/getting-started/
 to your free environment and [deploy the component](https://docs.architect.io/getting-started/introduction/#deploy-to-the-cloud)
 using the commands below from the `node-rest-api` directory.
 
-The `<account-name>` is the name you used when you created your account in Architect Cloud. "example-environment" is the name of the free environment that is created when you register with Architect.
+"example-environment" is the name of the free environment that is created when you register with Architect.
 
 ```sh
 # Deploy to Architect Cloud
