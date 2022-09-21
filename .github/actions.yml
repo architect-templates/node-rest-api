@@ -1,0 +1,54 @@
+name: Architect Preview
+
+on:
+  pull_request:
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - closed
+
+env:
+  ARCHITECT_EMAIL: ${{ secrets.ARCHITECT_EMAIL }}
+  ARCHITECT_PASSWORD: ${{ secrets.ARCHITECT_PASSWORD }}
+  ARCHITECT_ACCOUNT: <account-name>
+
+  PLATFORM_NAME: architect # Ex. "architect" to use the managed platform
+  COMPONENT_NAME: node-rest-api # Change to the name in your architect.yml
+  PREVIEW_TAG: preview-${{ github.event.number }}
+
+jobs:
+  architect_create_preview:
+    if: github.event.action != 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - uses: crazy-max/ghaction-github-runtime@v2 # Exports internal envs for Github Actions. Required for register caching to work.
+      - name: Install Architect CLI
+        run: sudo npm install -g @architect-io/cli
+      - name: Login to Architect Cloud
+        run: architect login
+      - name: Register component w/ Architect
+        run: architect register -t ${{ env.PREVIEW_TAG }}
+      - name: Create env if not exists
+        run: architect environment:create ${{ env.PREVIEW_TAG }} --platform ${{ env.PLATFORM_NAME }} --ttl=1d || exit 0
+      - name: Deploy component
+        run: architect deploy --auto-approve -e ${{ env.PREVIEW_TAG }} ${{ env.COMPONENT_NAME }}:${{ env.PREVIEW_TAG }}
+
+  architect_remove_preview:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+      - name: Install Architect CLI
+        run: sudo npm install -g @architect-io/cli
+      - name: Login to Architect Cloud
+        run: architect login
+      - name: Remove preview environment
+        run: architect environment:destroy ${{ env.PREVIEW_TAG }} --auto-approve -f || exit 0x`
