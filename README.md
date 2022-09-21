@@ -98,3 +98,4 @@ $ architect register . --tag latest --account <account-name>
 # Deploy to Architect Cloud
 $ architect deploy node-rest-api -a <account-name> -e <environment-name>
 ```
+Test
