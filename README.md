@@ -75,26 +75,17 @@ $ git clone git@github.com:architect-templates/node-rest-api.git
 $ cd ./node-rest-api
 
 # Deploy locally using the dev command
-$ architect dev .
+$ architect dev architect.yml
 ```
-
 
 ## Deploying to the Cloud
 
 Want to try deploying this to a cloud environment? Architect's got you covered there, too! It only takes a minute to
-[sign up for a free account](https://auth.architect.io/u/signup?state=hKFo2SAtSnhOdXljdy1nelBHb2NlajNhZkkybTlLOEJHcWRFeaFur3VuaXZlcnNhbC1sb2dpbqN0aWTZIFNCNEZUUFBHaWpBdlA3UVlVV0xFNk1rQVJvUHBzdF9Bo2NpZNkgbElwVzlmcTlJRlFCQmpUZ2xsaE42RUkwMVRYTWhSVm0).
+[sign up for a free account](https://cloud.architect.io/signup).
 
-You can then [register the component](https://docs.architect.io/getting-started/?_ga=2.19805311.635236263.1652126693-1328677302.1650395826#register-a-component)
-to your free environment and [deploy the component](https://docs.architect.io/getting-started/introduction/#deploy-to-the-cloud)
-using the commands below from the `node-rest-api` directory.
-
-The `<account-name>` is the name you used when you created your account in Architect Cloud. Use "example-environment" for
-the `<environment-name>` to deploy to the free environment that is created when you register with Architect.
+You can then [deploy the component](https://docs.architect.io/getting-started/introduction/#deploy-to-the-cloud) by running the command below from the `node-rest-api` directory. Note that “example-environment” is the free environment that is created with your Architect account.
 
 ```sh
-# Register and tag the component with Architect Cloud's component registry
-$ architect register . --tag latest --account <account-name>
-
 # Deploy to Architect Cloud
-$ architect deploy node-rest-api -a <account-name> -e <environment-name>
+$ architect deploy architect.yml -e example-environment
 ```
