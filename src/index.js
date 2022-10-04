@@ -23,6 +23,11 @@ const start = async () => {
   app.use(bodyParser.urlencoded({ extended: true }));
   app.use(bodyParser.json());
 
+  process.on('unhandledRejection', (reason, promise) => {
+    console.log('Unhandled rejection at ', promise, `reason: ${reason.message}`)
+    process.exit(1)
+  })
+
   const sequelize = new Sequelize(process.env.DB_ADDR, {
     username: process.env.DB_USER,
     password: process.env.DB_PASS,
