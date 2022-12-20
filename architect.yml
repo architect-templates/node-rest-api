@@ -41,7 +41,10 @@ services:
     build:
       context: .
     interfaces:
-      http: ${{ secrets.api_port }}
+      main:
+        port: ${{ secrets.api_port }}
+        ingress:
+          subdomain: api
     environment:
       DB_ADDR: ${{ services.api-db.interfaces.database.url }}/${{ secrets.db_name }}
       DB_USER: ${{ secrets.db_user }}
@@ -56,10 +59,3 @@ services:
         src:
           mount_path: /usr/src/app/src
           host_path: ./src
-
-interfaces:
-  api:
-    description: A description
-    url: ${{ services.api.interfaces.http.url }}
-    ingress:
-      subdomain: api
