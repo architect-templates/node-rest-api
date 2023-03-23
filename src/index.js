@@ -45,12 +45,19 @@ const start = async () => {
       type: Sequelize.STRING,
       allowNull: false,
       unique: true,
+      validate: {
+        notEmpty: true,
+        notNull: true,
+      },
     },
     rating: {
       type: Sequelize.INTEGER,
+      allowNull: false,
       validate: {
         min: 1,
         max: 5,
+        notEmpty: true,
+        notNull: true,
       },
     },
   });
